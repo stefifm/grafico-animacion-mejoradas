@@ -1,0 +1,75 @@
+<canvas
+  width="600"
+  height="400"></canvas>
+
+<script>
+  const pantalla = document.querySelector('canvas');
+  const pincel = pantalla.getContext('2d');
+
+  pincel.fillStyle = 'grey';
+  pincel.fillRect(0, 0, 600, 400);
+
+  const colores = ['green', 'red', 'pink', 'brown', 'yellow', 'blue'];
+  let indice = 0;
+
+  let puedoDibujar = false;
+
+  function dibujarCirculo(evento) {
+    const x = evento.pageX - pantalla.offsetLeft;
+    const y = evento.pageY - pantalla.offsetTop;
+
+    if (puedoDibujar) {
+      if ((x > 50 * colores.length + 5 && y > 0) || (x < 50 * colores.length + 5 && y > 50 + 5)) {
+        pincel.fillStyle = colores[indice];
+        pincel.beginPath();
+        pincel.arc(x, y, 5, 0, 2 * 3.14);
+        pincel.fill();
+      }
+    }
+  }
+
+  function dibujarCuadrado(x, y, color) {
+    pincel.fillStyle = color;
+    pincel.beginPath();
+    pincel.fillRect(x, y, 50, 50);
+  }
+
+  function dibujarPaleta(y, colores) {
+    for (let x = 0; x < 50 * colores.length; x = x + 50) {
+      dibujarCuadrado(x, y, colores[indice]);
+      indice++;
+    }
+  }
+
+  function seleccionar(evento) {
+    const x = evento.pageX - pantalla.offsetLeft;
+    const y = evento.pageY - pantalla.offsetTop;
+    let aux = 0;
+    for (let i = 0; i < colores.length; i++) {
+      if (y > 0 && y < 50) {
+        if (x > aux && x < aux + 50) {
+          indice = i;
+          break;
+        }
+      }
+      aux += 50;
+    }
+  }
+
+  pantalla.onclick = seleccionar;
+  pantalla.onmousemove = dibujarCirculo;
+
+  function habilitarDibujar() {
+    puedoDibujar = true;
+  }
+
+  dibujarPaleta(0, colores);
+
+  function deshabilitarDibujar() {
+    puedoDibujar = false;
+  }
+
+  pantalla.onmousedown = habilitarDibujar;
+
+  pantalla.onmouseup = deshabilitarDibujar;
+</script>
